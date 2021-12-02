@@ -1,0 +1,210 @@
+{
+    "definition": {
+        "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+        "actions": {
+            "Check_if_Scope_is_at_Subscription": {
+                "actions": {
+                    "For_each_resource_group_in_scope": {
+                        "actions": {
+                            "REST_-_Logic_App_-_Budget_Deallocator_(If_scope_is_Subscription": {
+                                "inputs": {
+                                    "body": {
+                                        "ResourceGroupName": "@{items('For_each_resource_group_in_scope')?['name']}",
+                                        "SubscriptionID": "@{body('Parse_JSON')?['data']?['SubscriptionId']}"
+                                    },
+                                    "method": "POST",
+                                    "uri": "@variables('budgetDeallocatorURI')"
+                                },
+                                "runAfter": {},
+                                "type": "Http"
+                            }
+                        },
+                        "foreach": "@body('Parse_response_from_Get_All_Resource_Groups')?['value']",
+                        "runAfter": {
+                            "Parse_response_from_Get_All_Resource_Groups": [
+                                "Succeeded"
+                            ]
+                        },
+                        "type": "Foreach"
+                    },
+                    "Parse_response_from_Get_All_Resource_Groups": {
+                        "inputs": {
+                            "content": "@body('REST_-_Azure_API_-_Get_All_Resource_Groups')",
+                            "schema": {
+                                "properties": {
+                                    "value": {
+                                        "items": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "string"
+                                                },
+                                                "location": {
+                                                    "type": "string"
+                                                },
+                                                "name": {
+                                                    "type": "string"
+                                                },
+                                                "properties": {
+                                                    "properties": {
+                                                        "provisioningState": {
+                                                            "type": "string"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                },
+                                                "type": {
+                                                    "type": "string"
+                                                }
+                                            },
+                                            "required": [
+                                                "id",
+                                                "name",
+                                                "type",
+                                                "location",
+                                                "properties"
+                                            ],
+                                            "type": "object"
+                                        },
+                                        "type": "array"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        },
+                        "runAfter": {
+                            "REST_-_Azure_API_-_Get_All_Resource_Groups": [
+                                "Succeeded"
+                            ]
+                        },
+                        "type": "ParseJson"
+                    },
+                    "REST_-_Azure_API_-_Get_All_Resource_Groups": {
+                        "inputs": {
+                            "authentication": {
+                                "audience": "https://management.azure.com/",
+                                "type": "ManagedServiceIdentity"
+                            },
+                            "method": "GET",
+                            "uri": "https://management.azure.com/subscriptions/@{body('Parse_JSON')?['data']?['SubscriptionId']}/resourcegroups?api-version=2021-04-01"
+                        },
+                        "runAfter": {},
+                        "type": "Http"
+                    }
+                },
+                "else": {
+                    "actions": {
+                        "REST_-_Logic_App_-_Budget_Deallocator_(If_scope_is_Resource_Group)": {
+                            "inputs": {
+                                "body": {
+                                    "ResourceGroupName": "@{body('Parse_JSON')?['data']?['ResourceGroup']}",
+                                    "SubscriptionID": "@{body('Parse_JSON')?['data']?['SubscriptionId']}"
+                                },
+                                "method": "POST",
+                                "uri": "@variables('budgetDeallocatorURI')"
+                            },
+                            "runAfter": {},
+                            "type": "Http"
+                        }
+                    }
+                },
+                "expression": {
+                    "and": [
+                        {
+                            "equals": [
+                                "@body('Parse_JSON')?['data']?['ResourceGroup']",
+                                ""
+                            ]
+                        }
+                    ]
+                },
+                "runAfter": {
+                    "Parse_JSON": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "If"
+            },
+            "Define_budgetDeallocatorURI": {
+                "inputs": {
+                    "variables": [
+                        {
+                            "name": "budgetDeallocatorURI",
+                            "type": "string",
+                            "value": "<YOUR BUDGET DECALLOCATOR TRIGGER URI>"
+                        }
+                    ]
+                },
+                "runAfter": {},
+                "type": "InitializeVariable"
+            },
+            "Parse_JSON": {
+                "inputs": {
+                    "content": "@triggerBody()",
+                    "schema": {
+                        "properties": {
+                            "data": {
+                                "properties": {
+                                    "Budget": {
+                                        "type": "string"
+                                    },
+                                    "BudgetCreator": {
+                                        "type": "string"
+                                    },
+                                    "BudgetName": {
+                                        "type": "string"
+                                    },
+                                    "BudgetStartDate": {
+                                        "type": "string"
+                                    },
+                                    "BudgetType": {
+                                        "type": "string"
+                                    },
+                                    "NotificationThresholdAmount": {
+                                        "type": "string"
+                                    },
+                                    "ResourceGroup": {
+                                        "type": "string"
+                                    },
+                                    "SpendingAmount": {
+                                        "type": "string"
+                                    },
+                                    "SubscriptionId": {
+                                        "type": "string"
+                                    },
+                                    "SubscriptionName": {
+                                        "type": "string"
+                                    },
+                                    "Unit": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            },
+                            "schemaId": {
+                                "type": "string"
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "runAfter": {
+                    "Define_budgetDeallocatorURI": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "ParseJson"
+            }
+        },
+        "contentVersion": "1.0.0.0",
+        "outputs": {},
+        "parameters": {},
+        "triggers": {
+            "manual": {
+                "inputs": {},
+                "kind": "Http",
+                "type": "Request"
+            }
+        }
+    },
+    "parameters": {}
+}
