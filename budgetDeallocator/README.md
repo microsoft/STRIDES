@@ -47,10 +47,15 @@ The second Logic App, **BudgetDeallocator**, is triggered by **BudgetDeallocator
  1. Click **Azure Role Assignments**
 
  1. Next, click **+ Add role assignment**, select **Subscription** as *Scope*, the appropriate subscription as *Subscription*, and **Reader** as *Role.* Then click **Save.**
- >This will allow the Logic App to enumerate resources in your environment.
+    >This will allow the Logic App to enumerate resources in your environment.
 
      ![Create Logic App](media/CreateLogicApp-04.png)
      
- 3. Click **Go To Resource** upon successful deployment of the Logic App, then click **Blank Logic App +** option from the Logic App Designer. 
+ 1. Click **Logic App Code View** from the left-heand navigation blade. Next, select all & delete the default code that is presented on the right-hand side. Once deleted, paste in the JSON contents of the [budgetDeallocatorOrchestrator Logic App found here](https://raw.githubusercontent.com/microsoft/STRIDES/main/budgetDeallocator/budgetDeallocatorOrchestrator.json) and press the **Designer** icon.
 
-    ![Create Logic App](media/CreateLogicApp-04.png)
+     ![Create Logic App](media/CreateLogicApp-05.png)
+     
+ 1. Expand the **Define budgetDeallocatorURI** by clicking on its title and replace the **Value** with the URI for your budgetDeallocator Logic App and click **Save.**
+    >Optionally, you can instead replace the value with another API endpoint such as an ITSM solution or other Logic App to extend functionality. 
+
+     ![Create Logic App](media/CreateLogicApp-06.png)
