@@ -1,0 +1,1050 @@
+{
+    "definition": {
+        "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+        "actions": {
+            "Build_Body": {
+                "inputs": {
+                    "name": "responseBody",
+                    "value": "@{variables('startTime')},\n\"EndTime\": \"@{utcNow()}\",\n[@{if(greaterOrEquals(length(variables('responseJSON')), 1), substring(variables('responseJSON'),0,sub(length(variables('responseJSON')),1)), '{\"Message\":\"Unable to find resources that can be deallocated.\"}')}]"
+                },
+                "runAfter": {
+                    "For_each": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "AppendToStringVariable"
+            },
+            "For_each": {
+                "actions": {
+                    "Check_if_DoNotShutDown_:_True_is_not_contained": {
+                        "actions": {
+                            "IF_attempted_to_deallocate_resource": {
+                                "actions": {
+                                    "Build_response_based_on_if_calls_were_successful_or_failed": {
+                                        "actions": {
+                                            "Append_to_string_variable": {
+                                                "inputs": {
+                                                    "name": "responseJSON",
+                                                    "value": "\n{\n\"ResourceName\": \"@{items('For_each')?['name']}\",\n\"ResourceGroup\": \"@{triggerBody()?['ResourceGroupName']}\",\n\"ResourceType\": \"@{items('For_each')?['type']}\",\n\"Message\": \"@{items('For_each')?['name']} failed to deallocate\"\n},"
+                                                },
+                                                "runAfter": {},
+                                                "type": "AppendToStringVariable"
+                                            }
+                                        },
+                                        "else": {
+                                            "actions": {
+                                                "Append_to_string_variable_2": {
+                                                    "inputs": {
+                                                        "name": "responseJSON",
+                                                        "value": "\n{\n\"ResourceName\": \"@{items('For_each')?['name']}\",\n\"ResourceGroup\": \"@{triggerBody()?['ResourceGroupName']}\",\n\"ResourceType\": \"@{items('For_each')?['type']}\",\n\"Message\": \"@{items('For_each')?['name']} is deallocated\"\n},"
+                                                    },
+                                                    "runAfter": {},
+                                                    "type": "AppendToStringVariable"
+                                                }
+                                            }
+                                        },
+                                        "expression": {
+                                            "and": [
+                                                {
+                                                    "equals": [
+                                                        "@variables('Catch')",
+                                                        true
+                                                    ]
+                                                }
+                                            ]
+                                        },
+                                        "runAfter": {},
+                                        "type": "If"
+                                    }
+                                },
+                                "expression": {
+                                    "and": [
+                                        {
+                                            "equals": [
+                                                "@variables('attemptToDeallocate')",
+                                                true
+                                            ]
+                                        }
+                                    ]
+                                },
+                                "runAfter": {
+                                    "If_resource_is_AKS_Managed_Cluster": [
+                                        "Succeeded"
+                                    ]
+                                },
+                                "type": "If"
+                            },
+                            "If_resource_is_AKS_Managed_Cluster": {
+                                "actions": {
+                                    "If_AKS_is_NOT_Stopped": {
+                                        "actions": {
+                                            "REST_Stop_AKS_Cluster": {
+                                                "inputs": {
+                                                    "authentication": {
+                                                        "audience": "https://management.azure.com/",
+                                                        "type": "ManagedServiceIdentity"
+                                                    },
+                                                    "method": "POST",
+                                                    "uri": "@{variables('restURL')}/stop?api-version=2021-09-01"
+                                                },
+                                                "runAfter": {},
+                                                "type": "Http"
+                                            },
+                                            "Set_Catch_on_Failure_to_Shutdown_AKS_Cluster": {
+                                                "inputs": {
+                                                    "name": "Catch",
+                                                    "value": true
+                                                },
+                                                "runAfter": {
+                                                    "REST_Stop_AKS_Cluster": [
+                                                        "Failed",
+                                                        "TimedOut"
+                                                    ]
+                                                },
+                                                "type": "SetVariable"
+                                            }
+                                        },
+                                        "expression": {
+                                            "and": [
+                                                {
+                                                    "not": {
+                                                        "equals": [
+                                                            "@body('Parse_AKS_JSON')?['properties']?['powerState']?['code']",
+                                                            "Stopped"
+                                                        ]
+                                                    }
+                                                },
+                                                {
+                                                    "equals": [
+                                                        "@body('Parse_AKS_JSON')?['properties']?['provisioningState']",
+                                                        "Succeeded"
+                                                    ]
+                                                }
+                                            ]
+                                        },
+                                        "runAfter": {
+                                            "Parse_AKS_JSON": [
+                                                "Succeeded"
+                                            ]
+                                        },
+                                        "type": "If"
+                                    },
+                                    "Parse_AKS_JSON": {
+                                        "inputs": {
+                                            "content": "@body('REST_GET_AKS_Cluster')",
+                                            "schema": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "string"
+                                                    },
+                                                    "identity": {
+                                                        "properties": {
+                                                            "principalId": {
+                                                                "type": "string"
+                                                            },
+                                                            "tenantId": {
+                                                                "type": "string"
+                                                            },
+                                                            "type": {
+                                                                "type": "string"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    },
+                                                    "location": {
+                                                        "type": "string"
+                                                    },
+                                                    "name": {
+                                                        "type": "string"
+                                                    },
+                                                    "properties": {
+                                                        "properties": {
+                                                            "addonProfiles": {
+                                                                "properties": {
+                                                                    "azurepolicy": {
+                                                                        "properties": {
+                                                                            "config": {},
+                                                                            "enabled": {
+                                                                                "type": "boolean"
+                                                                            }
+                                                                        },
+                                                                        "type": "object"
+                                                                    },
+                                                                    "httpApplicationRouting": {
+                                                                        "properties": {
+                                                                            "config": {},
+                                                                            "enabled": {
+                                                                                "type": "boolean"
+                                                                            }
+                                                                        },
+                                                                        "type": "object"
+                                                                    },
+                                                                    "omsAgent": {
+                                                                        "properties": {
+                                                                            "config": {
+                                                                                "properties": {
+                                                                                    "logAnalyticsWorkspaceResourceID": {
+                                                                                        "type": "string"
+                                                                                    }
+                                                                                },
+                                                                                "type": "object"
+                                                                            },
+                                                                            "enabled": {
+                                                                                "type": "boolean"
+                                                                            },
+                                                                            "identity": {
+                                                                                "properties": {
+                                                                                    "clientId": {
+                                                                                        "type": "string"
+                                                                                    },
+                                                                                    "objectId": {
+                                                                                        "type": "string"
+                                                                                    },
+                                                                                    "resourceId": {
+                                                                                        "type": "string"
+                                                                                    }
+                                                                                },
+                                                                                "type": "object"
+                                                                            }
+                                                                        },
+                                                                        "type": "object"
+                                                                    }
+                                                                },
+                                                                "type": "object"
+                                                            },
+                                                            "agentPoolProfiles": {
+                                                                "items": {
+                                                                    "properties": {
+                                                                        "availabilityZones": {
+                                                                            "items": {
+                                                                                "type": "string"
+                                                                            },
+                                                                            "type": "array"
+                                                                        },
+                                                                        "count": {
+                                                                            "type": "integer"
+                                                                        },
+                                                                        "enableAutoScaling": {
+                                                                            "type": "boolean"
+                                                                        },
+                                                                        "enableFIPS": {
+                                                                            "type": "boolean"
+                                                                        },
+                                                                        "kubeletDiskType": {
+                                                                            "type": "string"
+                                                                        },
+                                                                        "maxPods": {
+                                                                            "type": "integer"
+                                                                        },
+                                                                        "mode": {
+                                                                            "type": "string"
+                                                                        },
+                                                                        "name": {
+                                                                            "type": "string"
+                                                                        },
+                                                                        "nodeImageVersion": {
+                                                                            "type": "string"
+                                                                        },
+                                                                        "orchestratorVersion": {
+                                                                            "type": "string"
+                                                                        },
+                                                                        "osDiskSizeGB": {
+                                                                            "type": "integer"
+                                                                        },
+                                                                        "osDiskType": {
+                                                                            "type": "string"
+                                                                        },
+                                                                        "osSKU": {
+                                                                            "type": "string"
+                                                                        },
+                                                                        "osType": {
+                                                                            "type": "string"
+                                                                        },
+                                                                        "powerState": {
+                                                                            "properties": {
+                                                                                "code": {
+                                                                                    "type": "string"
+                                                                                }
+                                                                            },
+                                                                            "type": "object"
+                                                                        },
+                                                                        "provisioningState": {
+                                                                            "type": "string"
+                                                                        },
+                                                                        "type": {
+                                                                            "type": "string"
+                                                                        },
+                                                                        "vmSize": {
+                                                                            "type": "string"
+                                                                        }
+                                                                    },
+                                                                    "required": [
+                                                                        "name",
+                                                                        "count",
+                                                                        "vmSize",
+                                                                        "osDiskSizeGB",
+                                                                        "osDiskType",
+                                                                        "kubeletDiskType",
+                                                                        "maxPods",
+                                                                        "type",
+                                                                        "availabilityZones",
+                                                                        "enableAutoScaling",
+                                                                        "provisioningState",
+                                                                        "powerState",
+                                                                        "orchestratorVersion",
+                                                                        "mode",
+                                                                        "osType",
+                                                                        "osSKU",
+                                                                        "nodeImageVersion",
+                                                                        "enableFIPS"
+                                                                    ],
+                                                                    "type": "object"
+                                                                },
+                                                                "type": "array"
+                                                            },
+                                                            "apiServerAccessProfile": {
+                                                                "properties": {
+                                                                    "enablePrivateCluster": {
+                                                                        "type": "boolean"
+                                                                    }
+                                                                },
+                                                                "type": "object"
+                                                            },
+                                                            "azurePortalFQDN": {
+                                                                "type": "string"
+                                                            },
+                                                            "dnsPrefix": {
+                                                                "type": "string"
+                                                            },
+                                                            "enableRBAC": {
+                                                                "type": "boolean"
+                                                            },
+                                                            "fqdn": {
+                                                                "type": "string"
+                                                            },
+                                                            "identityProfile": {
+                                                                "properties": {
+                                                                    "kubeletidentity": {
+                                                                        "properties": {
+                                                                            "clientId": {
+                                                                                "type": "string"
+                                                                            },
+                                                                            "objectId": {
+                                                                                "type": "string"
+                                                                            },
+                                                                            "resourceId": {
+                                                                                "type": "string"
+                                                                            }
+                                                                        },
+                                                                        "type": "object"
+                                                                    }
+                                                                },
+                                                                "type": "object"
+                                                            },
+                                                            "kubernetesVersion": {
+                                                                "type": "string"
+                                                            },
+                                                            "maxAgentPools": {
+                                                                "type": "integer"
+                                                            },
+                                                            "networkProfile": {
+                                                                "properties": {
+                                                                    "dnsServiceIP": {
+                                                                        "type": "string"
+                                                                    },
+                                                                    "dockerBridgeCidr": {
+                                                                        "type": "string"
+                                                                    },
+                                                                    "loadBalancerProfile": {
+                                                                        "properties": {
+                                                                            "effectiveOutboundIPs": {
+                                                                                "items": {
+                                                                                    "properties": {
+                                                                                        "id": {
+                                                                                            "type": "string"
+                                                                                        }
+                                                                                    },
+                                                                                    "required": [
+                                                                                        "id"
+                                                                                    ],
+                                                                                    "type": "object"
+                                                                                },
+                                                                                "type": "array"
+                                                                            },
+                                                                            "managedOutboundIPs": {
+                                                                                "properties": {
+                                                                                    "count": {
+                                                                                        "type": "integer"
+                                                                                    }
+                                                                                },
+                                                                                "type": "object"
+                                                                            }
+                                                                        },
+                                                                        "type": "object"
+                                                                    },
+                                                                    "loadBalancerSku": {
+                                                                        "type": "string"
+                                                                    },
+                                                                    "networkPlugin": {
+                                                                        "type": "string"
+                                                                    },
+                                                                    "outboundType": {
+                                                                        "type": "string"
+                                                                    },
+                                                                    "podCidr": {
+                                                                        "type": "string"
+                                                                    },
+                                                                    "serviceCidr": {
+                                                                        "type": "string"
+                                                                    }
+                                                                },
+                                                                "type": "object"
+                                                            },
+                                                            "nodeResourceGroup": {
+                                                                "type": "string"
+                                                            },
+                                                            "powerState": {
+                                                                "properties": {
+                                                                    "code": {
+                                                                        "type": "string"
+                                                                    }
+                                                                },
+                                                                "type": "object"
+                                                            },
+                                                            "provisioningState": {
+                                                                "type": "string"
+                                                            },
+                                                            "publicNetworkAccess": {
+                                                                "type": "string"
+                                                            },
+                                                            "servicePrincipalProfile": {
+                                                                "properties": {
+                                                                    "clientId": {
+                                                                        "type": "string"
+                                                                    }
+                                                                },
+                                                                "type": "object"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    },
+                                                    "sku": {
+                                                        "properties": {
+                                                            "name": {
+                                                                "type": "string"
+                                                            },
+                                                            "tier": {
+                                                                "type": "string"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    },
+                                                    "type": {
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        },
+                                        "runAfter": {
+                                            "REST_GET_AKS_Cluster": [
+                                                "Succeeded"
+                                            ]
+                                        },
+                                        "type": "ParseJson"
+                                    },
+                                    "REST_GET_AKS_Cluster": {
+                                        "inputs": {
+                                            "authentication": {
+                                                "audience": "https://management.azure.com/",
+                                                "type": "ManagedServiceIdentity"
+                                            },
+                                            "method": "GET",
+                                            "uri": "@{variables('restURL')}?api-version=2021-09-01"
+                                        },
+                                        "runAfter": {
+                                            "Set_variable_2": [
+                                                "Succeeded"
+                                            ]
+                                        },
+                                        "type": "Http"
+                                    },
+                                    "Set_Catch_on_Failure_to_Get_AKS_Cluster": {
+                                        "inputs": {
+                                            "name": "Catch",
+                                            "value": true
+                                        },
+                                        "runAfter": {
+                                            "REST_GET_AKS_Cluster": [
+                                                "TimedOut",
+                                                "Failed"
+                                            ]
+                                        },
+                                        "type": "SetVariable"
+                                    },
+                                    "Set_variable_2": {
+                                        "inputs": {
+                                            "name": "restURL",
+                                            "value": "https://management.azure.com/subscriptions/@{triggerBody()?['SubscriptionID']}/resourceGroups/@{triggerBody()?['ResourceGroupName']}/providers/Microsoft.ContainerService/managedClusters/@{items('For_each')?['name']}"
+                                        },
+                                        "runAfter": {},
+                                        "type": "SetVariable"
+                                    }
+                                },
+                                "expression": {
+                                    "and": [
+                                        {
+                                            "equals": [
+                                                "@items('For_each')?['type']",
+                                                "Microsoft.ContainerService/managedClusters"
+                                            ]
+                                        }
+                                    ]
+                                },
+                                "runAfter": {
+                                    "If_resource_is_Synapse_Dedicated_Pool": [
+                                        "Succeeded"
+                                    ]
+                                },
+                                "type": "If"
+                            },
+                            "If_resource_is_Synapse_Dedicated_Pool": {
+                                "actions": {
+                                    "Condition": {
+                                        "actions": {
+                                            "REST_Pause_Synapse_Dedicated_Pool": {
+                                                "inputs": {
+                                                    "authentication": {
+                                                        "audience": "https://management.azure.com/",
+                                                        "type": "ManagedServiceIdentity"
+                                                    },
+                                                    "method": "POST",
+                                                    "uri": "@{variables('restURL')}/pause?api-version=2021-06-01"
+                                                },
+                                                "runAfter": {},
+                                                "type": "Http"
+                                            },
+                                            "Set_Catch_on_Failure_to_Pause_Synapse": {
+                                                "inputs": {
+                                                    "name": "Catch",
+                                                    "value": true
+                                                },
+                                                "runAfter": {
+                                                    "REST_Pause_Synapse_Dedicated_Pool": [
+                                                        "TimedOut",
+                                                        "Failed"
+                                                    ]
+                                                },
+                                                "type": "SetVariable"
+                                            }
+                                        },
+                                        "expression": {
+                                            "and": [
+                                                {
+                                                    "equals": [
+                                                        "@body('Parse_JSON')?['properties']?['status']",
+                                                        "Online"
+                                                    ]
+                                                }
+                                            ]
+                                        },
+                                        "runAfter": {
+                                            "Parse_JSON": [
+                                                "Succeeded"
+                                            ]
+                                        },
+                                        "type": "If"
+                                    },
+                                    "Parse_JSON": {
+                                        "inputs": {
+                                            "content": "@body('REST_Get_Synapse_Status')",
+                                            "schema": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "string"
+                                                    },
+                                                    "location": {
+                                                        "type": "string"
+                                                    },
+                                                    "name": {
+                                                        "type": "string"
+                                                    },
+                                                    "properties": {
+                                                        "properties": {
+                                                            "collation": {
+                                                                "type": "string"
+                                                            },
+                                                            "creationDate": {
+                                                                "type": "string"
+                                                            },
+                                                            "maxSizeBytes": {
+                                                                "type": "integer"
+                                                            },
+                                                            "provisioningState": {
+                                                                "type": "string"
+                                                            },
+                                                            "restorePointInTime": {
+                                                                "type": "string"
+                                                            },
+                                                            "status": {
+                                                                "type": "string"
+                                                            },
+                                                            "storageAccountType": {
+                                                                "type": "string"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    },
+                                                    "sku": {
+                                                        "properties": {
+                                                            "name": {
+                                                                "type": "string"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    },
+                                                    "tags": {
+                                                        "properties": {
+                                                            "tagKey1": {
+                                                                "type": "string"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    },
+                                                    "type": {
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        },
+                                        "runAfter": {
+                                            "REST_Get_Synapse_Status": [
+                                                "Succeeded"
+                                            ]
+                                        },
+                                        "type": "ParseJson"
+                                    },
+                                    "REST_Get_Synapse_Status": {
+                                        "inputs": {
+                                            "authentication": {
+                                                "audience": "https://management.azure.com/",
+                                                "type": "ManagedServiceIdentity"
+                                            },
+                                            "method": "GET",
+                                            "uri": "@{variables('restURL')}?api-version=2021-06-01"
+                                        },
+                                        "runAfter": {
+                                            "Set_variable": [
+                                                "Succeeded"
+                                            ]
+                                        },
+                                        "type": "Http"
+                                    },
+                                    "Set_Catch_on_Failure_to_Get_Synapse_Details": {
+                                        "inputs": {
+                                            "name": "Catch",
+                                            "value": true
+                                        },
+                                        "runAfter": {
+                                            "REST_Get_Synapse_Status": [
+                                                "TimedOut",
+                                                "Failed"
+                                            ]
+                                        },
+                                        "type": "SetVariable"
+                                    },
+                                    "Set_attempToDeallocate_=_True_for_Synapse": {
+                                        "inputs": {
+                                            "name": "attemptToDeallocate",
+                                            "value": true
+                                        },
+                                        "runAfter": {},
+                                        "type": "SetVariable"
+                                    },
+                                    "Set_variable": {
+                                        "inputs": {
+                                            "name": "restURL",
+                                            "value": "https://management.azure.com/subscriptions/@{triggerBody()?['SubscriptionID']}/resourceGroups/@{triggerBody()?['ResourceGroupName']}/providers/Microsoft.Synapse/workspaces/@{split(items('For_each')?['name'],'/')[0]}/sqlPools/@{split(items('For_each')?['name'],'/')[1]}"
+                                        },
+                                        "runAfter": {
+                                            "Set_attempToDeallocate_=_True_for_Synapse": [
+                                                "Succeeded"
+                                            ]
+                                        },
+                                        "type": "SetVariable"
+                                    }
+                                },
+                                "expression": {
+                                    "and": [
+                                        {
+                                            "equals": [
+                                                "@items('For_each')?['type']",
+                                                "Microsoft.Synapse/workspaces/sqlPools"
+                                            ]
+                                        }
+                                    ]
+                                },
+                                "runAfter": {
+                                    "If_resource_is_VM": [
+                                        "Succeeded"
+                                    ]
+                                },
+                                "type": "If"
+                            },
+                            "If_resource_is_VM": {
+                                "actions": {
+                                    "REST_Deallocate_VM": {
+                                        "inputs": {
+                                            "authentication": {
+                                                "audience": "https://management.azure.com/",
+                                                "type": "ManagedServiceIdentity"
+                                            },
+                                            "method": "POST",
+                                            "uri": "https://management.azure.com/subscriptions/@{triggerBody()?['SubscriptionID']}/resourceGroups/@{triggerBody()?['ResourceGroupName']}/providers/Microsoft.Compute/virtualMachines/@{items('For_each')?['name']}/deallocate?api-version=2021-07-01"
+                                        },
+                                        "runAfter": {
+                                            "Set_attemptToDeallocate_=_True_for_VM": [
+                                                "Succeeded"
+                                            ]
+                                        },
+                                        "type": "Http"
+                                    },
+                                    "Set_Catch_on_Failure_to_Deallocate_VM": {
+                                        "inputs": {
+                                            "name": "Catch",
+                                            "value": true
+                                        },
+                                        "runAfter": {
+                                            "REST_Deallocate_VM": [
+                                                "Failed",
+                                                "TimedOut"
+                                            ]
+                                        },
+                                        "type": "SetVariable"
+                                    },
+                                    "Set_attemptToDeallocate_=_True_for_VM": {
+                                        "inputs": {
+                                            "name": "attemptToDeallocate",
+                                            "value": true
+                                        },
+                                        "runAfter": {},
+                                        "type": "SetVariable"
+                                    }
+                                },
+                                "expression": {
+                                    "and": [
+                                        {
+                                            "equals": [
+                                                "@items('For_each')?['type']",
+                                                "Microsoft.Compute/virtualMachines"
+                                            ]
+                                        }
+                                    ]
+                                },
+                                "runAfter": {},
+                                "type": "If"
+                            },
+                            "Reset_Catch": {
+                                "inputs": {
+                                    "name": "Catch",
+                                    "value": false
+                                },
+                                "runAfter": {
+                                    "Reset_attemptToDeallocate": [
+                                        "Succeeded"
+                                    ]
+                                },
+                                "type": "SetVariable"
+                            },
+                            "Reset_attemptToDeallocate": {
+                                "inputs": {
+                                    "name": "attemptToDeallocate",
+                                    "value": false
+                                },
+                                "runAfter": {
+                                    "IF_attempted_to_deallocate_resource": [
+                                        "Succeeded"
+                                    ]
+                                },
+                                "type": "SetVariable"
+                            }
+                        },
+                        "expression": {
+                            "and": [
+                                {
+                                    "not": {
+                                        "contains": [
+                                            "@variables('Tags')",
+                                            "\"DoNotShutDown\":\"True\""
+                                        ]
+                                    }
+                                }
+                            ]
+                        },
+                        "runAfter": {
+                            "Set_Tags_to_String": [
+                                "Succeeded"
+                            ]
+                        },
+                        "type": "If"
+                    },
+                    "Set_Tags_to_String": {
+                        "inputs": {
+                            "name": "Tags",
+                            "value": "@{items('For_each')?['tags']}"
+                        },
+                        "runAfter": {},
+                        "type": "SetVariable"
+                    }
+                },
+                "foreach": "@body('Parse_Resource_Values')?['value']",
+                "runAfter": {
+                    "Initialize_REST_URL": [
+                        "Succeeded"
+                    ]
+                },
+                "runtimeConfiguration": {
+                    "concurrency": {
+                        "repetitions": 1
+                    }
+                },
+                "type": "Foreach"
+            },
+            "Get_All_Resources_in_Resource_Group": {
+                "inputs": {
+                    "authentication": {
+                        "audience": "https://management.azure.com/",
+                        "type": "ManagedServiceIdentity"
+                    },
+                    "method": "GET",
+                    "queries": {
+                        "$filter": "resourceType eq 'Microsoft.Compute/virtualMachines' OR resourceType eq 'Microsoft.ContainerService/managedClusters' OR resourceType eq 'Microsoft.Synapse/workspaces/sqlPools'",
+                        "api-version": "2021-04-01"
+                    },
+                    "uri": "https://management.azure.com/subscriptions/@{triggerBody()?['SubscriptionID']}/resourceGroups/@{triggerBody()?['ResourceGroupName']}/resources"
+                },
+                "runAfter": {},
+                "type": "Http"
+            },
+            "Initialize_Catch": {
+                "inputs": {
+                    "variables": [
+                        {
+                            "name": "Catch",
+                            "type": "boolean",
+                            "value": false
+                        }
+                    ]
+                },
+                "runAfter": {
+                    "Initialize_starTime": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "InitializeVariable"
+            },
+            "Initialize_REST_URL": {
+                "inputs": {
+                    "variables": [
+                        {
+                            "name": "restURL",
+                            "type": "string"
+                        }
+                    ]
+                },
+                "runAfter": {
+                    "Initialize_Tags": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "InitializeVariable"
+            },
+            "Initialize_Response_Body": {
+                "inputs": {
+                    "variables": [
+                        {
+                            "name": "responseBody",
+                            "type": "string"
+                        }
+                    ]
+                },
+                "runAfter": {
+                    "Initialize_Response_JSON": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "InitializeVariable"
+            },
+            "Initialize_Response_JSON": {
+                "inputs": {
+                    "variables": [
+                        {
+                            "name": "responseJSON",
+                            "type": "string"
+                        }
+                    ]
+                },
+                "runAfter": {
+                    "Parse_Resource_Values": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "InitializeVariable"
+            },
+            "Initialize_Tags": {
+                "inputs": {
+                    "variables": [
+                        {
+                            "name": "Tags",
+                            "type": "string"
+                        }
+                    ]
+                },
+                "runAfter": {
+                    "Initialize_attemptToDeallocate": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "InitializeVariable"
+            },
+            "Initialize_attemptToDeallocate": {
+                "inputs": {
+                    "variables": [
+                        {
+                            "name": "attemptToDeallocate",
+                            "type": "boolean",
+                            "value": false
+                        }
+                    ]
+                },
+                "runAfter": {
+                    "Initialize_Catch": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "InitializeVariable"
+            },
+            "Initialize_starTime": {
+                "inputs": {
+                    "variables": [
+                        {
+                            "name": "startTime",
+                            "type": "string",
+                            "value": "\"StartTime\": \"@{utcNow()}\""
+                        }
+                    ]
+                },
+                "runAfter": {
+                    "Initialize_Response_Body": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "InitializeVariable"
+            },
+            "Parse_Resource_Values": {
+                "inputs": {
+                    "content": "@body('Get_All_Resources_in_Resource_Group')",
+                    "schema": {
+                        "properties": {
+                            "value": {
+                                "items": {
+                                    "properties": {
+                                        "id": {
+                                            "type": "string"
+                                        },
+                                        "kind": {
+                                            "type": "string"
+                                        },
+                                        "location": {
+                                            "type": "string"
+                                        },
+                                        "managedBy": {
+                                            "type": "string"
+                                        },
+                                        "name": {
+                                            "type": "string"
+                                        },
+                                        "sku": {
+                                            "properties": {
+                                                "name": {
+                                                    "type": "string"
+                                                },
+                                                "tier": {
+                                                    "type": "string"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "tags": {
+                                            "properties": {
+                                                "DoNotShutDown": {
+                                                    "type": "string"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "type": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "required": [
+                                        "id",
+                                        "name",
+                                        "type",
+                                        "location"
+                                    ],
+                                    "type": "object"
+                                },
+                                "type": "array"
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "runAfter": {
+                    "Get_All_Resources_in_Resource_Group": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "ParseJson"
+            },
+            "Response": {
+                "inputs": {
+                    "body": "@variables('responseBody')",
+                    "statusCode": 200
+                },
+                "kind": "Http",
+                "runAfter": {
+                    "Build_Body": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "Response"
+            }
+        },
+        "contentVersion": "1.0.0.0",
+        "outputs": {},
+        "parameters": {},
+        "triggers": {
+            "manual": {
+                "inputs": {
+                    "schema": {
+                        "properties": {
+                            "ResourceGroupName": {
+                                "type": "string"
+                            },
+                            "SubscriptionID": {
+                                "type": "string"
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "kind": "Http",
+                "type": "Request"
+            }
+        }
+    },
+    "parameters": {}
+}
