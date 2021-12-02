@@ -6,10 +6,10 @@ Budget Deallocator's intent is to protect budgets from crossing over a specified
 
 Generally, a resource which is in the deallocated, paused, shutdown, or similar state in Azure no longer incurs compute charges; however, it is important to understand that not all resources in Azure are eligible to be deallocated, and that other charges for the resources, such as storage, will still incur charges. 
 
->Today, the following resource types are deallocated by Budget Deallocator: 
->- Azure Virtual Machines
->- Azure Synapse Analytics Dedicated Pools
->- Azure Kubernetes Service Clusters
+Today, the following resource types are deallocated by Budget Deallocator: 
+- Azure Virtual Machines
+- Azure Synapse Analytics Dedicated Pools
+- Azure Kubernetes Service Clusters
 
 Budget Deallocator has been split into two separate Logic Apps so that an ITSM, workflow manager, or similar may be placed in between to handle additional logic such as an approval workflow.
 
