@@ -38,7 +38,7 @@ We will need to create a [custom Azure Role Based Access Control Role](https://d
 
 1. From your Azure subscription, click **Access Controll (IAM)**, then click **Roles.** Finally, locate the *Reader* role, click on the ellipsis on the far right and select **clone**.
 
-    ![Clone Reader Role](media/CreateCustomRole-01.png)
+    ![Clone Reader Role](media/CreateCustomRole-02.png)
     
 1. In the *Basics* tab, enter **Resource Reader and Operator** for the *Custom role name* and leave everything else as default. 
 1. In the *JSON* tab, click **Edit**, and add the following after the *"\*/read",* line , then click **Save**, then **Review + Create** followed by **Create**.
