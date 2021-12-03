@@ -130,3 +130,39 @@ We will need to create a [custom Azure Role Based Access Control Role](https://d
     >Optionally, you can instead replace the value with another API endpoint such as an ITSM solution or other Logic App to extend functionality. 
 
      ![Create Logic App](media/CreateLogicApp-06.png)
+
+---
+
+## Create an Azure Cost Management Budget & Alert
+Within [Azure Cost Management + Billing](https://docs.microsoft.com/en-us/azure/cost-management-billing/cost-management-billing-overview_, we are able to define [Azure Budgets](https://docs.microsoft.com/en-us/azure/cost-management-billing/costs/tutorial-acm-create-budgets) at specifics scopes, such as an Enrollment, Management Group, Subscription, and Resource Group. Within these budgets, we are also able to set thresholds (e.g. 75% of budget) for alerting. Within each threshold, we are able to send notifications as well as trigger [Azure Action Groups](https://docs.microsoft.com/en-us/azure/azure-monitor/alerts/action-groups). Azure Action Groups allow you to do a multitude of things, such as trigger an ITSM solution or REST API; however, we will be focusing on triggering our budgetDeallocatorOrchestrator Logic App.
+
+1. From the Azure Portal, select the **Cost Management + Billing** icon from the far-left navigation pane. Next, click **Cost Management**, followed by **Budgets.** Finally, set your scope to the appropriate scope you would like to protect against budget overuns. This can be set to an Enrollment, Management Group, Subscription or Resource Group.
+
+     ![Create a Budget](media/CreateBudget-01.png)
+     
+1. From the *Create budget* page, give your budget an appropriate *Name*, *Reset period* and *Amount*. If appropriate, set the *Creation date* to today's date, then click **Next.**
+
+    ![Create a Budget](media/CreateBudget-02.png)
+
+1. Use the following table as *guidance* for the **Alert conditions** section. 
+
+    | Field Name  | Recommended Value | Note |
+    | ------------- | ------------- | ------------- |
+    | Type  | Actual  | Triggered when the budget actually reaches this threshold instead of when it is forecasted to reach it  |
+    | % of budget  | 90  | Trigger when the budget actually reaches 90%  |
+
+1. Under **Alert recipients (email)** enter in the email address for who should receive a notification, next click **Manage action group.**
+
+    ![Create a Budget](media/CreateBudget-03.png)
+    
+1. From the Action Groups page, click **+Create New**. Fill out the approrpiate details in the *Basics* tab and then go to the *Actions* tab.
+
+    ![Create a Budget](media/CreateBudget-04.png)
+ 
+1. From the *Actions* tab, choose **Logic App** for *Action type*, then select your **budgetDeallocatorOrchestrator** Logic App and click OK. **DO NOT enable the Common Alert Schema.** Next, give your action and appropriate name and click **Review + Create**, followed by **Create.**
+
+    ![Create a Budget](media/CreateBudget-05.png)
+    
+1. Close the *Manage action group* window, which will take you back to the *Create budget* page. You will now be able to choose your new action group as an option from within the *Action Group* drop down, then press **Create**.
+
+    ![Create a Budget](media/CreateBudget-06.png)
