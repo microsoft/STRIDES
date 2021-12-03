@@ -40,9 +40,7 @@ The second Logic App, **BudgetDeallocator**, is triggered by **BudgetDeallocator
   
 1. Leave all other fields as default, click **Review+Create** and upon validation, click the **Create** button. 
 
-    ![Create Logic App](media/CreateLogicApp-02.png)
-
- 1. From your new Logic App's resource page, click **Identity**, then toggle the *System Assigned Managed Identity* to **On** and click **Save.**
+1. From your new Logic App's resource page, click **Identity**, then toggle the *System Assigned Managed Identity* to **On** and click **Save.**
  
      ![Create Logic App](media/CreateLogicApp-07.png)
      
@@ -52,7 +50,11 @@ The second Logic App, **BudgetDeallocator**, is triggered by **BudgetDeallocator
     >This will allow the Logic App to enumerate resources in your environment.
 
      ![Create Logic App](media/CreateLogicApp-08.png)
-     
+
+ 1. Click **Logic App Code View** from the left-heand navigation blade. Next, select all & delete the default code that is presented on the right-hand side. Once deleted, paste in the JSON contents of the [budgetDeallocator Logic App found here](https://raw.githubusercontent.com/microsoft/STRIDES/main/budgetDeallocator/budgetDeallocator.json) and press the **Save** icon.
+
+     ![Create Logic App](media/CreateLogicApp-09.png)
+
 ---
 
 ## Deploy BudgetDeallocatorOrchestrator Logic App
