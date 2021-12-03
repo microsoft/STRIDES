@@ -21,6 +21,40 @@ The second Logic App, **BudgetDeallocator**, is triggered by **BudgetDeallocator
 
 ![Budget Deallocator Orchestrator Logic](media/budgetDeallocator%20Logic.png)
 
+---
+
+## Deploy BudgetDeallocator Logic App
+
+1. From the Azure Portal, click on the **+Create a resource** icon on the top of the far-left navigation blade, search for *Logic App* and select **Logic App** from the results. 
+  
+    ![Create Logic App](media/CreateLogicApp-01.png)
+    
+1. Fill out the **Basics** form with the appropriate information following the guidance below: 
+
+    | Field Name  | Recommended Value |
+    | ------------- | ------------- |
+    | Subscritpion  | A centrally managed or "hub" Azure Subscription  |
+    | Resource Group  | budgetDeallocator-RG  |
+    | Type  | Consumption  |
+    | Logic App Name  | budgetDeallocator  |
+  
+1. Leave all other fields as default, click **Review+Create** and upon validation, click the **Create** button. 
+
+    ![Create Logic App](media/CreateLogicApp-02.png)
+
+ 1. From your new Logic App's resource page, click **Identity**, then toggle the *System Assigned Managed Identity* to **On** and click **Save.**
+ 
+     ![Create Logic App](media/CreateLogicApp-07.png)
+     
+ 1. Click **Azure Role Assignments**
+
+ 1. Next, click **+ Add role assignment**, select **Subscription** as *Scope*, the appropriate subscription as *Subscription*. Select the custom role created earlier, **Resource Reader and Operator** as *Role.* Then click **Save.**
+    >This will allow the Logic App to enumerate resources in your environment.
+
+     ![Create Logic App](media/CreateLogicApp-08.png)
+     
+---
+
 ## Deploy BudgetDeallocatorOrchestrator Logic App
 
 1. From the Azure Portal, click on the **+Create a resource** icon on the top of the far-left navigation blade, search for *Logic App* and select **Logic App** from the results. 
