@@ -34,7 +34,7 @@ We will need to create a [custom Azure Role Based Access Control Role](https://d
 - [Microsoft.ContainerService/managedClusters/stop/action](https://docs.microsoft.com/en-us/azure/role-based-access-control/resource-provider-operations#microsoftcontainerservice)
 - [Microsoft.ContainerService/managedClusters/start/action](https://docs.microsoft.com/en-us/azure/role-based-access-control/resource-provider-operations#microsoftcontainerservice)
 
-1. From your Azure subscription, click **Access Controll (IAM)**, then click **Roles.** Finally, locate the *Reader* role, click on the ellipsis on the far right and select **clone**.
+1. From your Azure subscription, click **Access Control (IAM)**, then click **Roles.** Finally, locate the *Reader* role, click on the ellipsis on the far right and select **clone**.
 
     ![Clone Reader Role](media/CreateCustomRole-01.png)
     
