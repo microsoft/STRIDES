@@ -51,10 +51,12 @@ We will need to create a [custom Azure Role Based Access Control Role](https://d
     ```
     
     ![Paste custom actions Reader Role](media/CreateCustomRole-02.png)
-    
----
 
 **Note: Please ensure you add a comma after "\*read"**
+
+---
+
+
 
 ## Deploy BudgetDeallocator Logic App
 
