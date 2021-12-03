@@ -1,3 +1,12 @@
+---
+## Tasks
+- [Overview](#Overview)
+- [Create the Resource Reader and Operator Custom Role](#Create-the-Resource-Reader-and-Operator-Custom-Role)
+- [Deploy BudgetDeallocator Logic App](#Deploy-BudgetDeallocator-Logic-App)
+- [Deploy BudgetDeallocatorOrchestrator Logic App](#Deploy-BudgetDeallocatorOrchestrator-Logic-App)
+- [Create an Azure Cost Management Budget & Alert](#Create-an-Azure-Cost-Management-Budget-&-Alert)
+---
+
 # Overview
 
 ![Budget Deallocator Flow](media/budgetDeallocator%20Flow.png)
@@ -23,7 +32,7 @@ The second Logic App, **BudgetDeallocator**, is triggered by **BudgetDeallocator
 
 ---
 
-## Create the Resource Reader and Operator Custom Role
+# Create the Resource Reader and Operator Custom Role
 We will need to create a [custom Azure Role Based Access Control Role](https://docs.microsoft.com/en-us/azure/role-based-access-control/custom-roles) so that the BudgetDeallocator Logic App's [System Assigned Managed Identity](https://docs.microsoft.com/en-us/azure/active-directory/managed-identities-azure-resources/overview) is able to take action on Azure resources on our behalf. This custom role will [clone the Reader role](https://docs.microsoft.com/en-us/azure/role-based-access-control/built-in-roles#reader) so that we may enumerate all resources. We will then extend the role to allow it take the following actions: 
 
 - [Microsoft.Compute/virtualMachines/start/action](https://docs.microsoft.com/en-us/azure/role-based-access-control/resource-provider-operations#microsoftcompute)
@@ -58,7 +67,7 @@ We will need to create a [custom Azure Role Based Access Control Role](https://d
 
 
 
-## Deploy BudgetDeallocator Logic App
+# Deploy BudgetDeallocator Logic App
 
 1. From the Azure Portal, click on the **+Create a resource** icon on the top of the far-left navigation blade, search for *Logic App* and select **Logic App** from the results. 
   
@@ -92,7 +101,7 @@ We will need to create a [custom Azure Role Based Access Control Role](https://d
 
 ---
 
-## Deploy BudgetDeallocatorOrchestrator Logic App
+# Deploy BudgetDeallocatorOrchestrator Logic App
 
 1. From the Azure Portal, click on the **+Create a resource** icon on the top of the far-left navigation blade, search for *Logic App* and select **Logic App** from the results. 
   
@@ -133,7 +142,7 @@ We will need to create a [custom Azure Role Based Access Control Role](https://d
 
 ---
 
-## Create an Azure Cost Management Budget & Alert
+# Create an Azure Cost Management Budget & Alert
 Within [Azure Cost Management + Billing](https://docs.microsoft.com/en-us/azure/cost-management-billing/cost-management-billing-overview_, we are able to define [Azure Budgets](https://docs.microsoft.com/en-us/azure/cost-management-billing/costs/tutorial-acm-create-budgets) at specifics scopes, such as an Enrollment, Management Group, Subscription, and Resource Group. Within these budgets, we are also able to set thresholds (e.g. 75% of budget) for alerting. Within each threshold, we are able to send notifications as well as trigger [Azure Action Groups](https://docs.microsoft.com/en-us/azure/azure-monitor/alerts/action-groups). Azure Action Groups allow you to do a multitude of things, such as trigger an ITSM solution or REST API; however, we will be focusing on triggering our budgetDeallocatorOrchestrator Logic App.
 
 1. From the Azure Portal, select the **Cost Management + Billing** icon from the far-left navigation pane. Next, click **Cost Management**, followed by **Budgets.** Finally, set your scope to the appropriate scope you would like to protect against budget overuns. This can be set to an Enrollment, Management Group, Subscription or Resource Group.
