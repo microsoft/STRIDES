@@ -26,19 +26,17 @@ The second Logic App, **BudgetDeallocator**, is triggered by **BudgetDeallocator
 ## Create the Resource Reader and Operator Custom Role
 We will need to create a [custom Azure Role Based Access Control Role](https://docs.microsoft.com/en-us/azure/role-based-access-control/custom-roles) so that the BudgetDeallocator Logic App's [System Assigned Managed Identity](https://docs.microsoft.com/en-us/azure/active-directory/managed-identities-azure-resources/overview) is able to take action on Azure resources on our behalf. This custom role will [clone the Reader role](https://docs.microsoft.com/en-us/azure/role-based-access-control/built-in-roles#reader) so that we may enumerate all resources. We will then extend the role to allow it take the following actions: 
 
-- Microsoft.Compute/virtualMachines/start/action
-- Microsoft.Compute/virtualMachines/restart/action
-- Microsoft.Compute/virtualMachines/deallocate/action
-- Microsoft.Synapse/workspaces/sqlPools/pause/action
-- Microsoft.Synapse/workspaces/sqlPools/resume/action
-- Microsoft.Web/sites/stop/Action
-- Microsoft.Web/sites/start/Action
-- Microsoft.ContainerService/managedClusters/stop/action
-- Microsoft.ContainerService/managedClusters/start/action
+- [Microsoft.Compute/virtualMachines/start/action](https://docs.microsoft.com/en-us/azure/role-based-access-control/resource-provider-operations#microsoftcompute)
+- [Microsoft.Compute/virtualMachines/restart/action](https://docs.microsoft.com/en-us/azure/role-based-access-control/resource-provider-operations#microsoftcompute)
+- [Microsoft.Compute/virtualMachines/deallocate/action](https://docs.microsoft.com/en-us/azure/role-based-access-control/resource-provider-operations#microsoftcompute)
+- [Microsoft.Synapse/workspaces/sqlPools/pause/action](https://docs.microsoft.com/en-us/azure/role-based-access-control/resource-provider-operations#microsoftsynapse)
+- [Microsoft.Synapse/workspaces/sqlPools/resume/action](https://docs.microsoft.com/en-us/azure/role-based-access-control/resource-provider-operations#microsoftsynapse)
+- [Microsoft.ContainerService/managedClusters/stop/action](https://docs.microsoft.com/en-us/azure/role-based-access-control/resource-provider-operations#microsoftcontainerservice)
+- [Microsoft.ContainerService/managedClusters/start/action](https://docs.microsoft.com/en-us/azure/role-based-access-control/resource-provider-operations#microsoftcontainerservice)
 
 1. From your Azure subscription, click **Access Controll (IAM)**, then click **Roles.** Finally, locate the *Reader* role, click on the ellipsis on the far right and select **clone**.
 
-    ![Clone Reader Role](media/CreateCustomRole-02.png)
+    ![Clone Reader Role](media/CreateCustomRole-01.png)
     
 1. In the *Basics* tab, enter **Resource Reader and Operator** for the *Custom role name* and leave everything else as default. 
 1. In the *JSON* tab, click **Edit**, and add the following after the *"\*/read",* line , then click **Save**, then **Review + Create** followed by **Create**.
@@ -48,13 +46,11 @@ We will need to create a [custom Azure Role Based Access Control Role](https://d
     "Microsoft.Compute/virtualMachines/deallocate/action",
     "Microsoft.Synapse/workspaces/sqlPools/pause/action",
     "Microsoft.Synapse/workspaces/sqlPools/resume/action",
-    "Microsoft.Web/sites/stop/Action",
-    "Microsoft.Web/sites/start/Action",
     "Microsoft.ContainerService/managedClusters/stop/action",
     "Microsoft.ContainerService/managedClusters/start/action"
     ```
     
-    ![Paste custom actions Reader Role](media/CreateCustomRole-01.png)
+    ![Paste custom actions Reader Role](media/CreateCustomRole-02.png)
     
 ---
 
