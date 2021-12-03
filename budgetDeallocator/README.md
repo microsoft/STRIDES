@@ -176,3 +176,8 @@ Within [Azure Cost Management + Billing](https://docs.microsoft.com/en-us/azure/
 1. Close the *Manage action group* window, which will take you back to the *Create budget* page. You will now be able to choose your new action group as an option from within the *Action Group* drop down, then press **Create**.
 
     ![Create a Budget](media/CreateBudget-06.png)
+    
+# Congratulations!
+You should now have a Budget Alert trigger that triggers the budgetDeallocatorOrchestrator Logic App that subsequently triggers the budgetDeallocator Logic App to deallocate compute resources in Azure!
+
+For a detailed overview of the solution, please go to the [Overview](#Overview) at the top of the page. 
