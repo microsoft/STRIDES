@@ -38,3 +38,37 @@ Requirements for the Administrative Subscription:
 - Must reside within your NIH Management Group
  
 > **_Note:_** Since all EA subscriptions default to the same name ("Microsoft Azure Enterprise") it is strongly recommended that you immediately change the name to something unique and meaningful (e.g. "STRIDES - Admin")
+
+# Create a Cost Management Export
+
+Azure Cost Management provides the ability to automatically schedule an export of your STRIDES environment's cost and utilization into an Azure Storage Account within your STRIDES Adminsitrative Subscription.
+
+1. From the Azure Portal, click on **Cost Management + Billing**, then **Cost Management**.
+
+    ![STRIDES Cost Management](media/strides-cost-management.png)
+
+1. Ensure your scope is set to your STRIDES Management group. If not, click **Change** next to your current scope, drill down until you see your STRIDES management group and select it. 
+
+    ![STRIDES Change Cost Management Scope](media/strides-change-scope.png)
+
+
+1. Click on **Exports** from the middle blade and follow the detailed instructions in the following link with these parameters.
+
+    Link: **[Tutorial: Create and manage exported data](https://docs.microsoft.com/en-us/azure/cost-management-billing/costs/tutorial-export-acm-data?tabs=azure-portal)**
+
+
+
+    | Field Name  | Recommended Value |
+    | ------------- | ------------- |
+    | **Name**  | STRIDESMonthly  |
+    | **Export Type**  | Monthly export of last month's cost  |
+    | **Start Date**  | Default  |
+    | **Storage**  | Create new  |
+    | **Subscription**  | Your STRIDES Adminsitrative Subscription  |
+    | **Resource group**  | Create new Resource Group called "STRIDES-exports-rg"  |
+    | **Account Name**  | Globally unique and meaningful alphanumeric name  |
+    | **Location**  | Azure Region closest to your institution  |
+    | **Container**  | strides  |
+    | **Directory**  | monthly  |
+
+    ![STRIDES Export Parameters](media/strides-export-params.png)
