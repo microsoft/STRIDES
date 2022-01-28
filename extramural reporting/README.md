@@ -49,7 +49,7 @@ Requirements for the Administrative Subscription:
 
 An NIH-owned Azure Storage Account name, storage container name, and secure access signature (SAS) token are required to export data from within your institution's Azure environment to NIH's Azure environment.
 
-> **_Note:_** NIH is currently implementing the solution to faciliate this process and are currently not able to satisfy any requests. This document will be updated once the processes are in place. For the time being, you may proceed with the rest of the documentation to request your Azure subscription and generate the cost and utilization exports. Once the processes are in place at NIH, you **must complete the steps to send data to their environment on a monthly basis.** 
+> **_Note:_** NIH is currently implementing the solution for this process and are currently not able to take requests. This document will be updated once the processes are in place. For the time being, you may proceed with the rest of the documentation to request your Azure subscription and generate the cost and utilization exports. Once the processes are in place at NIH, you **must complete the steps to send data to their environment on a monthly basis.** 
 
 
 
