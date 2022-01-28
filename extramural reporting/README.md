@@ -1,14 +1,20 @@
 # Overview
 All extramural NIH STRIDES environments are required to report their utilization and cost to NIH monthly so that NIH may audit discounts and report to congress. This document provides instructions on automating the reporting to ensure your NIH STRIDES environment remains compliant. 
 
-Prerequisites:
+## Prerequisites:
 
 - [All STRIDES Azure Subscriptions must be isolated within their own Management Group](STRIDES-Management-Group)
 - [An administrative Azure subscription within the NIH Management Group](STRIDES-Administrative-Subscription)
-- Required resources to request from NIH:
+
+- [Required resources to request from NIH](Required-resources-from-NIH):
   - Reporting Storage Account name
   - Reporting Storage Account container name
   - Reporting Storage Account SAS token
+
+## Tasks:
+
+1. [Create an Azure Cost Management Export](Create-a-Cost-Management-Export)
+1. [Create Logic App to Push Data to NIH](Create-Logic-App-to-Push-Data-to-NIH)
 
 
 # STRIDES Management Group
@@ -38,6 +44,14 @@ Requirements for the Administrative Subscription:
 - Must reside within your NIH Management Group
  
 > **_Note:_** Since all EA subscriptions default to the same name ("Microsoft Azure Enterprise") it is strongly recommended that you immediately change the name to something unique and meaningful (e.g. "STRIDES - Admin")
+
+# Required resources from NIH
+
+An NIH-owned Azure Storage Account name, storage container name, and secure access signature (SAS) token are required to export data from within your institution's Azure environment to NIH's Azure environment.
+
+> **_Note:_** NIH is currently implementing the solution to faciliate this process and are currently not able to satisfy any requests. This document will be updated once the processes are in place. For the time being, you may proceed with the rest of the documentation to request your Azure subscription and generate the cost and utilization exports. Once the processes are in place at NIH, you **must complete the steps to send data to their environment on a monthly basis.** 
+
+
 
 # Create a Cost Management Export
 
@@ -72,3 +86,9 @@ Azure Cost Management provides the ability to automatically schedule an export o
     | **Directory**  | monthly  |
 
     ![STRIDES Export Parameters](media/strides-export-params.png)
+
+
+
+# Create Logic App to Push Data to NIH
+
+Please see note here: [Required resources to request from NIH](Required-resources-from-NIH)
