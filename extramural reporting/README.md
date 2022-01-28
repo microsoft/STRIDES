@@ -3,18 +3,18 @@ All extramural NIH STRIDES environments are required to report their utilization
 
 ## Prerequisites:
 
-- [All STRIDES Azure Subscriptions must be isolated within their own Management Group](STRIDES-Management-Group)
-- [An administrative Azure subscription within the NIH Management Group](STRIDES-Administrative-Subscription)
+- [All STRIDES Azure Subscriptions must be isolated within their own Management Group](#STRIDES-Management-Group)
+- [An administrative Azure subscription within the NIH Management Group](#STRIDES-Administrative-Subscription)
 
-- [Required resources to request from NIH](Required-resources-from-NIH):
+- [Required resources to request from NIH](#Required-resources-from-NIH):
   - Reporting Storage Account name
   - Reporting Storage Account container name
   - Reporting Storage Account SAS token
 
 ## Tasks:
 
-1. [Create an Azure Cost Management Export](Create-a-Cost-Management-Export)
-1. [Create Logic App to Push Data to NIH](Create-Logic-App-to-Push-Data-to-NIH)
+1. [Create an Azure Cost Management Export](#Create-a-Cost-Management-Export)
+1. [Create Logic App to Push Data to NIH](#Create-Logic-App-to-Push-Data-to-NIH)
 
 
 # STRIDES Management Group
@@ -91,4 +91,4 @@ Azure Cost Management provides the ability to automatically schedule an export o
 
 # Create Logic App to Push Data to NIH
 
-Please see note here: [Required resources to request from NIH](Required-resources-from-NIH)
+Please see note here: [Required resources to request from NIH](#Required-resources-from-NIH)
