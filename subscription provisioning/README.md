@@ -1,6 +1,6 @@
 # STRIDES Subscription Provisioning Process
 
-**All** Azure Subscriptions within a STRIDES enrollment must first be approved by the NIH. This includes net-new subscriptions, as well as existing subscriptions that are candidates to be migrated from a non-STRIDES enrollments into a STRIDES enrollment. 
+**All** Azure Subscriptions within a STRIDES enrollment must first be approved by the NIH. This includes net-new subscriptions, administrative subscriptions, and existing subscriptions that are candidates to be migrated from a non-STRIDES enrollments into a STRIDES enrollment. 
 
 The subscription process to seek approval is as follows:
 
