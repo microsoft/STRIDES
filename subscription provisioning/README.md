@@ -7,10 +7,10 @@ The subscription process to seek approval is as follows:
 | Task | Owner  | Description |
 | ------------- | ------------- | ------------- |
 | 1  | Customer  | Complete [STRIDES Subscription Provisioning Request Form](assets/STRIDES%20Subscription%20Provisioning%20Template.xlsx), submit to Microsoft account team  |
-| 3 | Microsoft | Complete request & submit to NIH STRIDES | 
-| 4 | NIH | Review & Approve request |
-| 5 | Customer | Create subscription, update form with subscription GUID, resubmit to Microsoft |
-| 6 | Microsoft | Submit updated form to NIH STRIDES |
+| 2 | Microsoft | Complete request & submit to NIH STRIDES | 
+| 3 | NIH | Review & Approve request |
+| 4 | Customer | Create subscription, update form with subscription GUID, resubmit to Microsoft |
+| 5 | Microsoft | Submit updated form to NIH STRIDES |
 
 The template for the Subscription Provisioning Request Form [can be found here](assets/STRIDES%20Subscription%20Provisioning%20Template.xlsx). 
 
