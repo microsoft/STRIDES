@@ -34,7 +34,7 @@ Creating a management group is a simple and well documented process:
 A single administrative subscription within your STRIDES enrollment & management group is required in order to host the resources and logic to report cost and utilizations to NIH.
 
 
-> **_Note:_**  Like all STRIDES subscriptions, you must first seek NIH approval by filling out the Subscription Request form. Please reach out to your Microsoft account team for more information.
+> **_Note:_**  Like all STRIDES subscriptions, you must first seek NIH approval by filling out the [Subscription Provisionoing Form](../subscription%20provisioning/README.md).
 
 
 Once you have received approval from NIH, creating the administrative subscription is no different than creating any other Azure subscription. Documentation on creating a new EA subscription [can be found here](https://docs.microsoft.com/en-us/azure/cost-management-billing/manage/create-subscription). 
