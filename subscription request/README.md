@@ -1,1 +1,0 @@
-# STRIDES Subscription Request Process
