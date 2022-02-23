@@ -22,7 +22,7 @@ An administrative subscription is necessary to support the [STRIDES reporting re
 | Field Name  | Value |
 | ------------- | ------------- |
 | **Program/Project Group**  | Admin Subscription  |
-| **Requesting ICO**  | Blank  |
+| **Requesting ICO**  | OD  |
 | **Funding Source**  | Blank  |
 | **Funding Amount**  | Blank  |
 | **Research Program**  | FALSE  |
