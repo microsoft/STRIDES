@@ -82,8 +82,8 @@ Azure Cost Management provides the ability to automatically schedule an export o
     | **Resource group**  | Create new Resource Group called "STRIDES-exports-rg"  |
     | **Account Name**  | Globally unique and meaningful alphanumeric name  |
     | **Location**  | Azure Region closest to your institution  |
-    | **Container**  | strides  |
-    | **Directory**  | monthly  |
+    | **Container**  | \<Your Azure Enrollment Number\>-InstituionName (e.g. <span style="color:red">**00000000-UniversityOfAzure**</span>)|
+    | **Directory**  | exports  |
 
     ![STRIDES Export Parameters](media/strides-export-params.png)
 
