@@ -14,7 +14,7 @@ All extramural NIH STRIDES environments are required to report their utilization
 ## Tasks:
 
 1. [Create an Azure Cost Management Export](#Create-a-Cost-Management-Export)
-1. [Create Logic App to Push Data to NIH](#Create-Logic-App-to-Push-Data-to-NIH)
+1. [Use Azure Data Share to Push Data to NIH](#Use-Azure-Data-Share-to-Push-Data-to-NIH)
 
 
 # STRIDES Management Group
@@ -89,6 +89,6 @@ Azure Cost Management provides the ability to automatically schedule an export o
 
 
 
-# Create Logic App to Push Data to NIH
+# Use Azure Data Share to Push Data to NIH
 
 Please see note here: [Required resources to request from NIH](#Required-resources-from-NIH)
