@@ -40,14 +40,6 @@ Requirements for the Administrative Subscription:
  
 > **_Note:_** Since all EA subscriptions default to the same name ("Microsoft Azure Enterprise") it is strongly recommended that you immediately change the name to something unique and meaningful (e.g. "STRIDES - Admin")
 
-# Required resources from NIH
-
-An NIH-owned Azure Storage Account name, storage container name, and secure access signature (SAS) token are required to export data from within your institution's Azure environment to NIH's Azure environment.
-
-> **_Note:_** NIH is currently implementing the solution for this process and are currently not able to take requests. This document will be updated once the processes are in place. For the time being, you may proceed with the rest of the documentation to request your Azure subscription and generate the cost and utilization exports. Once the processes are in place at NIH, you **must complete the steps to send data to their environment on a monthly basis.** 
-
-
-
 # Create a Cost Management Export
 
 Azure Cost Management provides the ability to automatically schedule an export of your STRIDES environment's cost and utilization into an Azure Storage Account within your STRIDES Adminsitrative Subscription.
