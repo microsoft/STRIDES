@@ -4,12 +4,7 @@ All extramural NIH STRIDES environments are required to report their utilization
 ## Prerequisites:
 
 - [All STRIDES Azure Subscriptions must be isolated within their own Management Group](#STRIDES-Management-Group)
-- [An administrative Azure subscription within the NIH Management Group](#STRIDES-Administrative-Subscription)
-
-- [Required resources to request from NIH](#Required-resources-from-NIH):
-  - Reporting Storage Account name
-  - Reporting Storage Account container name
-  - Reporting Storage Account SAS token
+- [An administrative Azure subscription](#STRIDES-Administrative-Subscription)
 
 ## Tasks:
 
@@ -91,4 +86,47 @@ Azure Cost Management provides the ability to automatically schedule an export o
 
 # Use Azure Data Share to Push Data to NIH
 
-Please see note here: [Required resources to request from NIH](#Required-resources-from-NIH)
+Azure Data Share is a fully-managed, zero overhead service that enables organizations to simply and securely share data between Azure environments. 
+
+It uses an invitation system to connect a data provider to data consumer and allows for the movement of data from provider to consumer without the need for developing complex pipelines, sharing secrets, or granting access.
+
+More information on Azure Data Share [can be found here](https://docs.microsoft.com/en-us/azure/data-share/overview).
+
+1.  [Create an Azure Data Share Account](https://docs.microsoft.com/en-us/azure/data-share/share-your-data-portal#create-a-data-share-account) in your **STRIDES-export-rg** resource group.
+ 
+1.  Create a Share within the Data Share Account with the parameters as defined below.
+
+    [Create Share documention](https://docs.microsoft.com/en-us/azure/data-share/share-your-data-portal#create-a-share)
+
+    **Details**
+    | Field Name  | Recommended Value |
+    | ------------- | ------------- |
+    | **Share name**  | Your Azure STRIDES Enrollment Number-InstituionName-share (e.g. <span style="color:red">**00000000-UniversityOfAzure-share**</span>)  |
+    | **Share type**  | Snapshot  |
+    | **Description**  | STRIDES Monthly Export<br/> Enrollment Number: 00000000<br/> Institution: institutionName |
+
+    **Datasets**
+
+    Choose the storage account and container that was created to store your monthly [cost management exports](#Create-a-Cost-Management-Export).
+
+    **Recipients**
+
+    Leave recipients blank
+
+    **Settings**
+
+    Enable **Snapshot schedule** with **Recurrence** set to *Daily*
+
+
+1. Invite the NIH to consume your data by executing the following PowerShell command in [Azure Cloud Shell](https://docs.microsoft.com/en-us/azure/cloud-shell/overview):
+
+    ```powershell
+    New-AzDataShareInvitation
+   -ResourceGroupName STRIDES-export-rg
+   -AccountName <Your Share Account Name>
+   -ShareName <Your Azure STRIDES Enrollment Number-InstituionName-share>
+   -Name <Your Azure STRIDES Enrollment Number-InstituionName-share>
+   -TargetObjectId <Provided by Microsoft NIH STRIDES Team>
+   -TargetTenantId <Provided by Microsoft NIH STRIDES Team>
+    ```
+To receive the TargetObjectId & TargetTenantId above, please [reach out to the Microsoft STRIDES Team](mailto:MSSTRIDES@microsoft.com).
