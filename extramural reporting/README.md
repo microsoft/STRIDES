@@ -84,7 +84,7 @@ It uses an invitation system to connect a data provider to data consumer and all
 
 More information on Azure Data Share [can be found here](https://docs.microsoft.com/en-us/azure/data-share/overview).
 
-1.  [Create an Azure Data Share Account](https://docs.microsoft.com/en-us/azure/data-share/share-your-data-portal#create-a-data-share-account) in your **STRIDES-export-rg** resource group.
+1.  [Create an Azure Data Share Account](https://docs.microsoft.com/en-us/azure/data-share/share-your-data-portal#create-a-data-share-account) in your **STRIDES-exports-rg** resource group.
  
 1.  Create a Share within the Data Share Account with the parameters as defined below.
 
@@ -114,7 +114,7 @@ More information on Azure Data Share [can be found here](https://docs.microsoft.
 
     ```powershell
     New-AzDataShareInvitation
-   -ResourceGroupName STRIDES-export-rg
+   -ResourceGroupName STRIDES-exports-rg
    -AccountName <Your Share Account Name>
    -ShareName <Your Azure STRIDES Enrollment Number-InstituionName-share>
    -Name <Your Azure STRIDES Enrollment Number-InstituionName-share>
