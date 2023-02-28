@@ -29,7 +29,7 @@ Creating a management group is a simple and well documented process:
 A single administrative subscription within your STRIDES enrollment & management group is required in order to host the resources and logic to report cost and utilizations to NIH.
 
 
-<s> > **_Note:_**  Like all STRIDES subscriptions, you must first seek NIH approval by filling out the [Subscription Provisionoing Form](../subscription%20provisioning/README.md).</s>
+<s> > **_Note:_**  Like all STRIDES subscriptions, you must first seek NIH approval by filling out the [Subscription Provisioning Form](../subscription%20provisioning/README.md).</s>
 > **_Note:_** NIH Approval is no longer required.
 
 
@@ -43,7 +43,7 @@ Requirements for the Administrative Subscription:
 
 # Create a Cost Management Export
 
-Azure Cost Management provides the ability to automatically schedule an export of your STRIDES environment's cost and utilization into an Azure Storage Account within your STRIDES Adminsitrative Subscription.
+Azure Cost Management provides the ability to automatically schedule an export of your STRIDES environment's cost and utilization into an Azure Storage Account within your STRIDES Administrative Subscription.
 
 1. From the Azure Portal, click on **Cost Management + Billing**, then **Cost Management**.
 
@@ -66,11 +66,11 @@ Azure Cost Management provides the ability to automatically schedule an export o
     | **Export Type**  | Monthly export of last month's cost  |
     | **Start Date**  | Default  |
     | **Storage**  | Create new  |
-    | **Subscription**  | Your STRIDES Adminsitrative Subscription  |
+    | **Subscription**  | Your STRIDES Administrative Subscription  |
     | **Resource group**  | Create new Resource Group called "STRIDES-exports-rg"  |
     | **Account Name**  | Globally unique and meaningful alphanumeric name  |
     | **Location**  | Azure Region closest to your institution  |
-    | **Container**  | Your Azure STRIDES Enrollment Number-InstituionName (e.g. <span style="color:red">**00000000-UniversityOfAzure**</span>)|
+    | **Container**  | Your Azure STRIDES Enrollment Number-InstitutionName (e.g. <span style="color:red">**00000000-institutionname**</span>) |
     | **Directory**  | exports  |
 
     ![STRIDES Export Parameters](media/strides-export-params.png)
@@ -89,12 +89,12 @@ More information on Azure Data Share [can be found here](https://docs.microsoft.
  
 1.  Create a Share within the Data Share Account with the parameters as defined below.
 
-    [Create Share documention](https://docs.microsoft.com/en-us/azure/data-share/share-your-data-portal#create-a-share)
+    [Create Share documentation](https://docs.microsoft.com/en-us/azure/data-share/share-your-data-portal#create-a-share)
 
     **Details**
     | Field Name  | Recommended Value |
     | ------------- | ------------- |
-    | **Share name**  | Your Azure STRIDES Enrollment Number-InstituionName-share (e.g. <span style="color:red">**00000000-UniversityOfAzure-share**</span>)  |
+    | **Share name**  | Your Azure STRIDES Enrollment Number-InstitutionName-share (e.g. <span style="color:red">**00000000-institutionname-share**</span>)  |
     | **Share type**  | Snapshot  |
     | **Description**  | STRIDES Monthly Export<br/> Enrollment Number: 00000000<br/> Institution: institutionName |
 
@@ -117,8 +117,8 @@ More information on Azure Data Share [can be found here](https://docs.microsoft.
     New-AzDataShareInvitation
    -ResourceGroupName STRIDES-exports-rg
    -AccountName <Your Share Account Name>
-   -ShareName <Your Azure STRIDES Enrollment Number-InstituionName-share>
-   -Name <Your Azure STRIDES Enrollment Number-InstituionName-share>
+   -ShareName <Your Azure STRIDES Enrollment Number-InstitutionName-share>
+   -Name <Your Azure STRIDES Enrollment Number-InstitutionName-share>
    -TargetObjectId <Provided by Microsoft NIH STRIDES Team>
    -TargetTenantId <Provided by Microsoft NIH STRIDES Team>
     ```
