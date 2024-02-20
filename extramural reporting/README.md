@@ -42,7 +42,9 @@ Requirements for the Reporting Subscription:
 - Must reside within your STRIDES enrollment
 - Must reside within your STRIDES Management Group
  
-> **_Note:_** Since all EA subscriptions default to the same name ("Microsoft Azure Enterprise") it is strongly recommended that you immediately change the name to something unique and meaningful (e.g. "STRIDES - Reporting")
+> **_Note:_** NIH mandates that all STRIDES subscriptions follow their strict naming convention. You must immediately rename the newly created reporting subscription subscription to:
+> "NIH-Awd.[STRIDES-Institution-Name](#Naming-Convention).CIT.Reporting"
+
 
 # Permissions
 
