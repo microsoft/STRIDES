@@ -41,9 +41,7 @@ Once you have received approval from NIH, creating the reporting subscription is
 Requirements for the Reporting Subscription:
 - Must reside within your STRIDES enrollment
 - Must reside within your STRIDES Management Group
- 
-> **_Note:_** NIH mandates that all STRIDES subscriptions follow their strict naming convention. You must immediately rename the newly created reporting subscription subscription to:
-> "NIH-Awd.[STRIDES-Institution-Name](#Naming-Convention).CIT.Reporting"
+- Must follow NIH's strict naming convention (i.e.,"NIH-Awd.[STRIDES-Institution-Name](#Naming-Convention).CIT.Reporting")
 
 
 # Permissions
