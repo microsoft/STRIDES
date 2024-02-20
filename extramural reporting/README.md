@@ -5,6 +5,9 @@ All extramural NIH STRIDES environments are required to report their utilization
 
 - [All STRIDES Azure Subscriptions must be isolated within their own Management Group](#STRIDES-Management-Group)
 - [A reporting Azure subscription](#STRIDES-Reporting-Subscription)
+- [Permissions](#Permissions)
+- [Enrollment Number](#Enrollment-Number)
+- [Naming Convention](#Naming-Convention)
 
 ## Tasks:
 
