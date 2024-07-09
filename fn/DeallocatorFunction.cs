@@ -22,8 +22,8 @@ namespace Microsoft.Education
                 _logger.LogError("Subscription or resourceGroup is null");
                 throw new ArgumentNullException("Subscription or resourceGroup is null");
             }
-            _resourceService = new ResourceService(subscription, resourceGroup);
-            _serviceManager = new DeallocatableServiceManager(subscription, resourceGroup);
+            _resourceService = new ResourceService(subscription);
+            _serviceManager = new DeallocatableServiceManager(subscription);
         }
 
         [Function("DeallocatorFunction")]
@@ -51,10 +51,10 @@ namespace Microsoft.Education
         {
             foreach (var resource in resources)
             {
-                if (resource == null || resource.Type == null || resource.Name == null) continue;
+                if (resource == null || resource.Type == null || resource.Name == null || resource.ResourceGroup == null) continue;
                 var service = _serviceManager.Get(resource.Type);
                 if (service == null) { resource.Error = "Not a dellocatable service."; continue; }
-                try { if (action == "up") { service.Up(resource.Name).Wait(); } else {service.Down(resource.Name).Wait(); }}
+                try { if (action == "up") { service.Up(resource.Name, resource.ResourceGroup).Wait(); } else {service.Down(resource.Name, resource.ResourceGroup).Wait(); }}
                 catch (Exception ex) { resource.Error = ex.Message.ToString(); continue; }
             }
         }
@@ -66,6 +66,8 @@ namespace Microsoft.Education
 Supports standard Azure RM filters:
 resourceType eq 'Microsoft.Compute/virtualMachines' OR resourceType eq 'Microsoft.ContainerService/managedClusters' OR resourceType eq 'Microsoft.Synapse/workspaces/sqlPools'
 http://localhost:7071/api/DeallocatorFunction?filter=resourceType%20eq%20%27Microsoft.Compute/virtualMachines%27%20OR%20resourceType%20eq%20%27Microsoft.ContainerService/managedClusters%27%20OR%20resourceType%20eq%20%27Microsoft.Synapse/workspaces/sqlPools%27
+resourceGroup eq 'autogen' AND resourceType eq 'Microsoft.Compute/virtualMachines'
+http://localhost:7071/api/DeallocatorFunction?filter=resourceGroup%20eq%20%27autogen%27%20AND%20resourceType%20eq%20%27Microsoft.Compute/virtualMachines%27
 tagName eq 'shutdown' AND tagValue eq 'true'
 http://localhost:7071/api/DeallocatorFunction?filter=tagName%20eq%20%27shutdown%27%20AND%20tagValue%20eq%20%27true%27
 Read more: https://learn.microsoft.com/en-us/rest/api/resources/resources/list?view=rest-resources-2021-04-01

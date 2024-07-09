@@ -1,5 +1,5 @@
 public interface IDeallocatableService
 {
-    Task Down(string name);
-    Task Up(string name);
+    Task Down(string name, string resourceGroup);
+    Task Up(string name, string resourceGroup);
 }

@@ -1,11 +1,11 @@
 namespace Microsoft.Education
 {
-    public class DeallocatableServiceManager(string subscription, string resourceGroup)
+    public class DeallocatableServiceManager(string subscription)
     {
-        private ManagedContainerClusterService _containerService = new ManagedContainerClusterService(subscription, resourceGroup);
-        private SpringAppsService _springAppsService = new SpringAppsService(subscription, resourceGroup);
-        private SynapseSQLPoolService _synapseService = new SynapseSQLPoolService(subscription, resourceGroup);
-        private VirtualMachineService _vmService = new VirtualMachineService(subscription, resourceGroup);
+        private ManagedContainerClusterService _containerService = new(subscription);
+        private SpringAppsService _springAppsService = new(subscription);
+        private SynapseSQLPoolService _synapseService = new(subscription);
+        private VirtualMachineService _vmService = new(subscription);
 
         public IDeallocatableService Get(string service)
         {

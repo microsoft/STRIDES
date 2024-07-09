@@ -9,19 +9,17 @@ namespace Microsoft.Education
     public class AzureServiceBase
     {
         private ArmClient _client;
-        private ResourceGroupResource? _resourceGroup;
         private SubscriptionResource? _subscription;
 
-        public ResourceGroupResource? GetResourceGroup()
+        public SubscriptionResource? GetSubscription()
         {
-            return _resourceGroup;
+            return _subscription;
         }
 
-        public AzureServiceBase(string subscription, string resourceGroup)
+        public AzureServiceBase(string subscription)
         {
             _client = new ArmClient(new DefaultAzureCredential());
             _subscription = _client.GetSubscriptions().GetAsync(subscription).Result;
-            _resourceGroup = _subscription.GetResourceGroupAsync(resourceGroup).Result;
         }
         
     }

@@ -7,23 +7,23 @@ using System.Security.Cryptography.X509Certificates;
 
 namespace Microsoft.Education
 {
-    public class ResourceService(string resourceGroup, string subscription) : AzureServiceBase(resourceGroup, subscription)
+    public class ResourceService(string subscription) : AzureServiceBase(subscription)
     {
         public async Task<List<DeallocatableResource>> GetResources(string filter = "")
         {
-            var resourceGroup = base.GetResourceGroup() ?? throw new Exception("Resource service returned no resource groups.");
-            
-            var resources = String.IsNullOrWhiteSpace(filter) ? 
-                resourceGroup.GetGenericResourcesAsync().AsPages() : 
-                resourceGroup.GetGenericResourcesAsync(filter).AsPages();
+            var subscription = base.GetSubscription() ?? throw new Exception("Service base returned no subscriptions.");
 
-            var deallocatables = new List<DeallocatableResource>();
+            var resources = String.IsNullOrWhiteSpace(filter) ? 
+            subscription.GetGenericResourcesAsync().AsPages() : 
+            subscription.GetGenericResourcesAsync(filter).AsPages();
+
+             var deallocatables = new List<DeallocatableResource>();
 
             await resources.ForEachAsync(page =>
             {
                 foreach (var resource in page.Values)
                 {
-                    deallocatables.Add(new DeallocatableResource(){ Name = resource.Data.Name, Type = resource.Data.ResourceType.ToString() });
+                    deallocatables.Add(new DeallocatableResource(){ Name = resource.Data.Name, Type = resource.Data.ResourceType.ToString(), ResourceGroup = resource.Data.Id.ResourceGroupName });
                 }
             });
 
