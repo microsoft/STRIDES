@@ -9,21 +9,10 @@ namespace Microsoft.Education
     public class DeallocatorFunction
     {
         private readonly ILogger<DeallocatorFunction> _logger;
-        private string? subscription = Environment.GetEnvironmentVariable("AZURE_SUBSCRIPTION_ID");
-        private string? resourceGroup = Environment.GetEnvironmentVariable("AZURE_RESOURCE_GROUP");
-        private ResourceService _resourceService;
-        private DeallocatableServiceManager _serviceManager;
 
         public DeallocatorFunction(ILogger<DeallocatorFunction> logger)
         {
             _logger = logger;
-            if (string.IsNullOrEmpty(subscription) || string.IsNullOrEmpty(resourceGroup))
-            {
-                _logger.LogError("Subscription or resourceGroup is null");
-                throw new ArgumentNullException("Subscription or resourceGroup is null");
-            }
-            _resourceService = new ResourceService(subscription);
-            _serviceManager = new DeallocatableServiceManager(subscription);
         }
 
         [Function("DeallocatorFunction")]
@@ -31,28 +20,33 @@ namespace Microsoft.Education
         {
             _logger.LogInformation("C# HTTP trigger function processed a request.");
           
-            var query = req.Query.ContainsKey("filter") ? req.Query["filter"].ToString() : "";
+            var subscription = req.Query.ContainsKey("subscription") ? req.Query["subscription"].ToString() : "";
+            if (string.IsNullOrWhiteSpace(subscription)) { return new OkObjectResult(new DeallocatableResourceResponse() { Error = "Subscription (GUID) must be provided." }); }
+            var resourceService = new ResourceService(subscription);
+            var serviceManager = new DeallocatableServiceManager(subscription);
+
+            var filter = req.Query.ContainsKey("filter") ? req.Query["filter"].ToString() : "";
             var action = req.Query.ContainsKey("action") ? req.Query["action"].ToString().ToLowerInvariant() : "";
 
             var resources = new List<DeallocatableResource>();
-            try { resources = _resourceService.GetResources(query).Result; }
+            try { resources = resourceService.GetResources(filter).Result; }
             catch (Exception ex) { return new OkObjectResult(new DeallocatableResourceResponse() { Action = action, ResourceCount = resources.Count, Resources = resources, Error = ex.Message.ToString() }); }
 
             if (resources.Count == 0) { return new OkObjectResult(new DeallocatableResourceResponse() { Resources = resources, Action = action, ResourceCount = resources.Count}); }
             if (string.IsNullOrWhiteSpace(action)) { return new OkObjectResult(new DeallocatableResourceResponse() { Resources = resources, Action = action, ResourceCount = resources.Count, Error = "Action must be 'up' or 'down'."}); }
 
-            Execute(resources, action);
+            Execute(serviceManager, resources, action);
 
             return new OkObjectResult(new DeallocatableResourceResponse() { Action = action, ResourceCount = resources.Count, Resources = resources});
 
         }
 
-        private void Execute(List<DeallocatableResource> resources, string action)
+        private void Execute(DeallocatableServiceManager serviceManager, List<DeallocatableResource> resources, string action)
         {
             foreach (var resource in resources)
             {
                 if (resource == null || resource.Type == null || resource.Name == null || resource.ResourceGroup == null) continue;
-                var service = _serviceManager.Get(resource.Type);
+                var service = serviceManager.Get(resource.Type);
                 if (service == null) { resource.Error = "Not a dellocatable service."; continue; }
                 try { if (action == "up") { service.Up(resource.Name, resource.ResourceGroup).Wait(); } else {service.Down(resource.Name, resource.ResourceGroup).Wait(); }}
                 catch (Exception ex) { resource.Error = ex.Message.ToString(); continue; }
@@ -65,10 +59,10 @@ namespace Microsoft.Education
 /*
 Supports standard Azure RM filters:
 resourceType eq 'Microsoft.Compute/virtualMachines' OR resourceType eq 'Microsoft.ContainerService/managedClusters' OR resourceType eq 'Microsoft.Synapse/workspaces/sqlPools'
-http://localhost:7071/api/DeallocatorFunction?filter=resourceType%20eq%20%27Microsoft.Compute/virtualMachines%27%20OR%20resourceType%20eq%20%27Microsoft.ContainerService/managedClusters%27%20OR%20resourceType%20eq%20%27Microsoft.Synapse/workspaces/sqlPools%27
+filter=resourceType%20eq%20%27Microsoft.Compute/virtualMachines%27%20OR%20resourceType%20eq%20%27Microsoft.ContainerService/managedClusters%27%20OR%20resourceType%20eq%20%27Microsoft.Synapse/workspaces/sqlPools%27
 resourceGroup eq 'autogen' AND resourceType eq 'Microsoft.Compute/virtualMachines'
-http://localhost:7071/api/DeallocatorFunction?filter=resourceGroup%20eq%20%27autogen%27%20AND%20resourceType%20eq%20%27Microsoft.Compute/virtualMachines%27
+filter=resourceGroup%20eq%20%27autogen%27%20AND%20resourceType%20eq%20%27Microsoft.Compute/virtualMachines%27
 tagName eq 'shutdown' AND tagValue eq 'true'
-http://localhost:7071/api/DeallocatorFunction?filter=tagName%20eq%20%27shutdown%27%20AND%20tagValue%20eq%20%27true%27
+filter=tagName%20eq%20%27shutdown%27%20AND%20tagValue%20eq%20%27true%27
 Read more: https://learn.microsoft.com/en-us/rest/api/resources/resources/list?view=rest-resources-2021-04-01
 */
